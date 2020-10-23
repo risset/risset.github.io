@@ -1,0 +1,38 @@
+---
+title: On Blogging
+date: 2020-07-14
+tags: 
+---
+
+* Why?
+I never saw much point in blogging before since I've always been a
+pretty introverted person who tends to keep my thoughts to
+myself. Recently I've decided to be more open about things, picking up
+some new skills and sharing what I learn with others. It would be good
+to have a place on the internet that I can show to people, and
+demonstrate projects and other stuff.
+
+* How?
+I am currently using a basic system of converting Emacs org-mode files
+to HTML with org-publish and styling them with CSS. I don't have much
+of a background in frontend web development so things are going to be
+quite simple in that department (which is how I like it
+anyway). Another reason I wanted to create the site besides the
+aforementioned reasons is that I've been interested in improving my
+basic skill in that area, even though frontend isn't what my main
+focus is as a programmer.
+
+*21/10/20 Update*: I've switched to using the Hakyll static web framework now. My
+system is still fairly similar, using Emacs org-mode as the markup
+language, but now things are a bit more flexible and less ad-hoc. I
+should be able to add new features to the site more easily this way.
+
+* Plans
+I was intending to make a longer post that would go into some things
+that I have been exploring recently related to Linux and Emacs, but it
+was taking a while and I wanted to focus on getting the basics of the
+site finished first, using a shorter initial post to test it. In the
+future, I plan to post fairly frequently. Most of the content will be
+about various programming projects I'm working on and topics I'm
+learning about, some of which hopefully will be useful or interesting
+to people stumbling upon the site.

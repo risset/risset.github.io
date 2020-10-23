@@ -1,0 +1,9 @@
+@function color($key) {
+  @return map-get($color-map, $key)
+}
+
+$color-map: ("bg": #272822, "fg": #f8f8f2, "grey": #808080, "red": #f92672, "magenta": #ae81ff, "yellow": #e6db74, "orange": #fb9022);
+$main-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+$monospace-font: 'Source Code Pro', Menlo, Monaco, 'Courier New', monospace !default;
+$font-size: 20px;
+$vertical-separator: 0.1rem solid rgba(color("grey"), .5);

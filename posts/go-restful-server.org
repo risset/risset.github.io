@@ -1,0 +1,86 @@
+---
+title: Go RESTful Server
+date: 2020-10-11
+tags: go, http
+---
+
+* REST 
+Having written a few client programs for interacting with different
+RESTful APIs, I wanted to learn more about how they work and implement
+one myself. "REST" is a software architecture that was described by
+Roy Fielding in
+[[https://www.ics.uci.edu/~fielding/pubs/dissertation/fielding_dissertation_2up.pdf][Architectural
+Styles and the Design of Network-based Software Architectures]]. Some
+of the main characteristics of such an architecture are statelessness,
+a uniform interface and a client-server relationship. "RESTful" APIs
+are usually public-facing interfaces that allow HTTP clients to make
+requests and manipulate resources via Create, Read, Update and Delete
+operations, inspired by the architectural constraints defined by
+Fielding. I have done some more research into this topic
+recently. [[https://twobithistory.org/2020/06/28/rest.html][There is a
+good post here]] that discusses the concept of RESTful APIs as they
+are known by software developers, in relation to the original paper. The essence
+is that the term and the architectural pattern itself have been
+overused somewhat, and the original paper doesn't actually have that
+relation to what we now associate "REST" with. I will stick with
+referring to this type of API as "RESTful" since I think it's a more
+honest term.
+
+* The Go Programming Language
+One of the aspects that drew me to learning Go was my growing interest
+in backend web development. Compared to other commonly used languages
+like python (which I already had a decent amount of experience with),
+I felt that there were some particular advantages to Go for this purpose:
+
+- Good standard library for web development, e.g. the net/http package
+- Strong, static typing and good development tools
+- High level of performance 
+- Being a fairly new language with lots of growth and opportunities
+
+Since I had a background in C++, it was very straightforward to pick
+up and start learning through writing code. So far, I am enjoying
+using the language, particularly how simple it is, and the level of
+productivity you can achieve with it. That being said, the simplicity
+can be a curse in itself as well. Famously, Go lacks generics, which
+is quite hard to get used to coming from C++. Gradually, I am learning
+how best to use language features like interfaces to manage
+complexity in Go programs in different ways.
+
+* HTTP Routing Approaches
+An important aspect of a RESTful service is providing HTTP methods at
+various URL endpoints, to manipulate
+resources. [[https://benhoyt.com/writings/go-routing/][This article on
+HTTP routing in Go]] was very useful in assessing the options
+available. It describes a few interesting approaches using the Go
+standard library, as well as introducing certain external libraries
+specifically created for this purpose. Eventually, I decided to adapt
+[[https://github.com/go-chi/chi/tree/master/_examples/rest][the
+following example from the go-chi library]]. 
+
+* The Code
+Much of the work was done already in the example code, but I had make
+a few modifications to structure it in a more modular fashion, and
+store data persistently in a postgresql database rather than in the
+program's memory. This was simple, albeit it took some time to
+understand what the go-chi library was doing and carry out all the
+refactoring. Managing access to the database without relying upon a
+globally available object was one of the challenges. For a small
+program, storing the object as a global variable is probably fine, and
+keeping to the spirit of Go by keeping things as simple as
+possible. That being said, I wanted to try and do things
+differently. Since the HTTP handler functions need to have a specific
+function signature, it was not as simple as passing a reference to the
+database object around as a function argument.
+
+The approach I went with was to create a new "ArticleEnv" struct type
+that contained the database as a member (via a more abstract
+"DataStore" type), and then implement the handler functions as methods
+of that type. With this simple example, the approach is somewhat
+convoluted since the data store is the only member of the ArticleEnv
+type, but a more complicated application may require additional values
+used by the handler functions.
+
+The repository for the project can be found
+[[https://github.com/risset/go-rest-api][here]]. I will be using it as
+a template to refer back to when I need to implement similar
+functionality in future programs.

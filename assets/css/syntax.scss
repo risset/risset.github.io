@@ -1,0 +1,198 @@
+@import "theme";
+
+pre > code.sourceCode {
+    white-space: pre;
+    position: relative;
+
+    > span {
+	display: inline-block;
+	line-height: 1.25;
+	font-size: 14px;
+    }
+
+    &:empty {
+	height: 1.2em;
+    }
+}
+
+code.sourceCode > span {
+    color: inherit;
+    text-decoration: inherit;
+}
+
+div.sourceCode {
+    margin: 1em 0;
+}
+
+pre { 
+    &.sourceCode {
+	margin: 0;
+    }
+
+    &.numberSource {
+	code {
+	    counter-reset: source-line 0;
+	}
+
+	> span {
+	    position: relative;
+	    left: -4em;
+	    counter-increment: source-line;
+	}
+
+	> a:first-child::before {
+	    content: counter(source-line);
+	    position: relative;
+	    left: -1em;
+	    text-align: right;
+	    vertical-align: baseline;
+	    border: none;
+	    display: inline-block;
+	    -webkit-touch-callout: none;
+	    -webkit-user-select: none;
+	    -khtml-user-select: none;
+	    -moz-user-select: none;
+	    -ms-user-select: none;
+	    user-select: none;
+	    padding: 0 4px;
+	    width: 4em;
+	    margin-left: 3em;
+	    padding-left: 4px;
+	}
+    }
+}
+
+@media screen {
+    div.sourceCode {
+	overflow: auto;
+    }
+}
+
+@media print {
+    pre > code.sourceCode {
+	white-space: pre-wrap;
+    }
+
+    > span {
+	text-indent: -5em;
+	padding-left: 5em;
+    }
+}
+
+div.sourceCode {
+    color: color(fg); 
+    background-color: color(bg);
+}
+
+@media screen {
+    pre > code.sourceCode > span > a:first-child::before {
+	text-decoration: underline;
+    }
+}
+
+code span {
+    &.al {
+	color: #ffcfaf;
+    }
+    
+    &.an {
+	color: #7f9f7f;
+	font-weight: bold;
+    }
+    
+    &.at {}
+
+    &.bn {
+	color: #dca3a3;
+    }
+    
+    &.bu {
+	color: color("red");
+    }
+
+    &.cf {
+	color: color("red");
+    }
+    
+    &.ch {
+	color: color("yellow");
+    }
+    
+    &.cn {
+	color: color("red");
+	font-weight: bold;
+    }
+    
+    &.co {
+	color: color("grey");
+    }
+    
+    &.cv {
+	color: color("grey");
+	font-weight: bold;
+    }
+    
+    &.do {
+	color: color("white");
+    }
+    
+    &.dt {
+	color: color("red");
+    }
+    
+    &.dv {
+	color: color("white");
+    }
+    
+    &.er {
+	color: color("red");
+    }
+
+    &.ex {}
+
+    &.fl {}
+    
+    &.fu {
+	color: #a6e22d;
+    }
+    
+    &.im {
+	color: color("red");
+    }
+
+    &.in {
+	color: color("grey");
+	font-weight: bold;
+    }
+    
+    &.kw {
+	color: color("red");
+    }
+    
+    &.op {
+	color: #f0efd0;
+    }
+    
+    &.ot {}
+    
+    &.pp {
+	color: color("red");
+	font-weight: bold;
+    }
+    
+    &.sc {
+	color: color("yellow");
+    }
+    
+    &.ss, &.st {
+	color: color("yellow");
+    }
+    
+    &.va {
+	color: color("orange");
+    }
+
+    &.vs {}
+    
+    &.wa {}
+}

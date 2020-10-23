@@ -1,0 +1,195 @@
+@import "theme";
+@import "syntax";
+
+html {
+    font-size: 62.5%;
+}
+
+body {
+    font-family: $main-font;
+    font-size: $font-size;
+    background-color: color("bg");
+    color: color("fg");
+}
+
+a {
+    color: color("red");
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+p {
+    line-height: 30px;
+}
+
+ul, li {
+    color: color("grey");
+}
+
+header {
+    border-bottom: $vertical-separator;
+    padding: 0 4px;
+    vertical-align: middle;
+}
+
+footer {
+    margin-top: 3rem;
+    padding: 1.2rem 0;
+    border-top: $vertical-separator;
+    font-size: $font-size * 0.75;
+    color: color("grey");
+}
+
+nav {
+    text-align: right;
+    vertical-align: middle;
+}
+
+img {
+    width: 100%;
+}
+
+figcaption {
+    font-size: $font-size * 0.75;
+    font-style: italic;
+}
+
+#home { 
+    font-family: $monospace-font;
+    font-size: $font-size * 1.5;
+    margin: -15px 0 0 0;
+    color: color("magenta");
+    float: left;
+}
+  
+#post-list { 
+    margin-left: 15%;
+}
+
+#post-list li { 
+    list-style-type: none;
+}
+
+#post-list-date { 
+    color: color("grey");
+    margin-right: 10px;
+}
+
+.post-title { 
+    font-family: $monospace-font;
+    font-size: $font-size * 3.0;
+    text-align: center;
+    color: color("grey");
+    margin-top: 10%;
+}
+
+.post-date { 
+    font-size: $font-size * 0.75;
+    font-weight: bold;
+    text-align: center;
+}
+
+.post-body { 
+    margin-top: 10%;
+}
+
+h1 { 
+    font-family: $monospace-font;
+    font-size: $font-size * 2;
+    color: color("grey");
+    margin-bottom: 0;
+}
+
+h2 { 
+    color: color("magenta");
+    font-size: $font-size;
+}
+
+figure { 
+    margin-top: 10%;
+    margin-bottom: 10%;
+    width: 100%;
+    text-align: center;
+}
+
+@media (max-width: 319px) {
+    body {
+	width: 90%;
+	margin: 0;
+	padding: 0 5%;
+    }
+    
+    header {
+	margin: 4.2rem 0;
+    }
+    
+    nav { 
+	margin: 0 auto 3rem;
+	text-align: center;
+    }
+    
+    footer { 
+	text-align: center;
+    }
+
+    nav a { 
+	display: block;
+	line-height: 1.6;
+    }
+}
+
+@media (min-width: 320px)  {
+    body { 
+	width: 90%;
+	margin: 0;
+	padding: 0 5%;
+    }
+    
+    header { 
+	margin: 4.2rem 0;
+    }
+    
+    nav { 
+	margin: 0 auto 3rem;
+	text-align: center;
+    }
+    
+    footer { 
+	text-align: center;
+    }
+    
+    nav a { 
+	display: inline;
+	margin: 0 0.6rem;
+    }
+}
+
+@media (min-width: 640px) {
+    body {
+	width: 80rem;
+	margin: 0 auto;
+	padding: 0;
+    }
+    
+    header {
+	margin: 0 0 3rem;
+	padding: 1.2rem 0;
+    }
+    
+    nav {
+	margin: 0;
+	text-align: right;
+    }
+    
+    nav a {
+	margin: 0 0 0 1.2rem;
+	display: inline;
+    }
+    
+    footer {
+	text-align: right;
+    }
+}

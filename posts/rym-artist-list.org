@@ -1,0 +1,76 @@
+---
+title: RYM Artist List
+date: 2020-08-03
+tags: python
+---
+
+* RYM
+RYM is an abbreviation of https://rateyourmusic.com, a popular website
+for music listeners on the internet. It's a very useful site for
+discovering new music and finding people with similar tastes, and I
+would recommend anyone with an interest in music to try it out. You
+can find my own profile here:
+
+https://rateyourmusic.com/~otokonoko
+
+* Artist List
+Today I wanted to update my list of favourite artists, which I had
+already formatted with some markup syntax as available on RYM's
+profile pages. I realised that it would make more sense long-term to
+just create a simple string formatting script where I could store the
+artist data and generate the formatting strings automatically. It was
+very quick to write and will make things a lot easier and faster in
+the long run if I decide to tweak my profile more. Here's the script:
+
+* Script
+#+begin_src python
+import pyperclip
+import sys
+
+"""
+Generate a pretty artist list for profiles on https://rateyourmusic.com. 
+Easy to update with different/new artists by finding the right ArtistID values 
+on the artist's page and updating the "artists" dictionary.
+"""
+
+def artist_str(artist_id: int, artist_name: str, sep_col: str) -> str:
+    """Format/style a single artist string."""
+    rule = '[Artist{}, {}][b][color {}]    |    [/color][/b]'
+    return rule.format(artist_id, artist_name, sep_col)
+
+
+def generate_artist_list(artists: dict, sep_col: str) -> str:
+    """Create a combined artist string."""
+    artist_list = [artist_str(v, k, sep_col) for k, v in artists.items()]
+    n = 39 # characters at end to discard (don't need final separator...)
+    return ''.join(artist_list)[:-n]
+
+
+if __name__ == '__main__':
+    artists = {
+        'iannis xenakis': 3441,
+        'henry cow': 1827,
+        '灰野 敬二': 10467,
+        'j.s. bach': 3419,
+        'györgy ligeti': 3444,
+        'john coltrane': 1101,
+        'red house painters': 817
+    }
+
+    artist_list = generate_artist_list(artists, sep_col='#ae81ff')
+
+    # copy to clipboard if args given
+    if len(sys.argv) == 2:
+        if (sys.argv[1] == '-clip' or sys.argv[1] == '-c'):
+            pyperclip.copy(artist_list)
+            sys.exit('Copied to clipboard.')
+
+    # otherwise print to standard output
+    print(artist_list)
+#+end_src
+
+#+begin_src go
+func main() {
+    fmt.Println("Hello, world!")
+}
+#+end_src
