@@ -4,7 +4,7 @@
 git stash
 
 # Verify correct branch
-git checkout develop
+git checkout hakyll
 
 # Build new files
 stack exec site clean
@@ -12,7 +12,7 @@ stack exec site build
 
 # Get previous files
 git fetch --all
-git checkout -b master --track origin/master
+git checkout -b main --track origin/main
 
 # Overwrite existing files with new files
 cp -a _site/. .
@@ -22,9 +22,9 @@ git add -A
 git commit -m "Publish"
 
 # Push
-git push origin master:master
+git push origin main:main
 
 # Restoration
-git checkout develop
-git branch -D master
+git checkout hakyll
+git branch -D main
 git stash pop
