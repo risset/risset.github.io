@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>risset.net - Booru Image Downloading</title>
+    <link rel="stylesheet" href="../assets/css/main.css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+	<a href="../"><span id="home">risset.net<span style="color: #808080">「</span>リセット<span style="color: #808080">」</span></span></a>
+	<a href="https://github.com/risset">github</a>
+      </nav>
+    </header>
+
+    <main role="main">
+      <article>
+  <section class="post-title">
+    Booru Image Downloading
+  </section>
+
+  <section class="post-date">
+    20-08-2020
+  </section>
+
+  <section class="post-body">
+    <h1 id="booru-sites">Booru Sites</h1>
+<p>Sites such as <a href="https://danbooru.donmai.us/">Danbooru</a> and <a href="https://gelbooru.com">Gelbooru</a>, which run imageboard software, hosting (primarily) anime artwork organised by tags. The imageboard software provides a RESTful API allowing other programs to make HTTP requests and access the imageboard’s resources.</p>
+<h1 id="motivation">Motivation</h1>
+<p>There are already quite a few programs out there that do this, but for a few reasons I decided to reinvent the wheel and create this program anyway:</p>
+<ol>
+<li>I’d like a very simple program for this purpose that does what I want and nothing unnecessary (I don’t need to upload or edit posts)</li>
+<li>It’s a pretty easy project to work on in a new language, and I wanted to start learning Go in a hands on way, without working on something overly difficult for a beginner</li>
+</ol>
+<p>You can find the source code <a href="https://github.com/risset/gobooru">here</a>.</p>
+<h1 id="implementation">Implementation</h1>
+<h2 id="steps">Steps</h2>
+<p>As mentioned, the program just focuses on retrieving post and tag data, which were the content from these booru sites I was concerned with. The core functionality boils down to a few steps, for either post or tag searches:</p>
+<ol>
+<li>Encode a URL for a search with the necessary query parameters</li>
+<li>Make a HTTP GET request with that URL</li>
+<li>Parse the JSON response</li>
+<li>Do something with it (display it, make another request with the image URL to download the image)</li>
+</ol>
+<p>All three of the APIs I’ve implemented support for take mostly the same query parameters, with a few exceptions, such as gelbooru using XML by default (I preferred to have all APIs return JSON responses). Gelbooru semi-optionally requires authentication (occasionally throttles requests otherwise), so I added configuration file support, so that API key and user ID values can be stored persistently, which I preferred over including them in the command line flags.</p>
+<p>The concurrent image downloading via goroutines is based off an example from the book <em>The Go Programming Language</em>, which I am currently reading. I would recommend this book to anyone learning the language. I plan to take a more in-depth look into the goroutine approach to concurrency soon, which I might write a post about.</p>
+<h2 id="interface">Interface</h2>
+<p>The program is separated into two Go modules: <em>backend</em>, which handles most of the functionality of the program, and <em>cmd</em>, which provides a command line frontend to that functionality. I was attracted to the prospect of using the <a href="https://github.com/spf13/cobra">Cobra</a> library, which seemed like a nice way of creating a command line interface.</p>
+<h1 id="image-thumbnail-browser">Image Thumbnail Browser</h1>
+<p><img src="../assets/images/thumbnails.png" /></p>
+<p>While creating this program, I also worked on a very simple shell script wrapper around the feh image viewer, for quickly viewing my downloaded images.</p>
+<h2 id="features">Features</h2>
+<ul>
+<li>Thumbnail size changes dynamically depending on number of images</li>
+<li>Minimalistic interface with no text, unlike the default view</li>
+<li>Support for a few actions on images (copying to clipboard, deletion, moving to a directory of choice). These require some extra scripts I’ve made along with some other shell utilities</li>
+</ul>
+<h2 id="limitations">Limitations</h2>
+<p>Feh doesn’t support animated gifs, webms, videos, etc. Mpv would be a good option to handle those cases.</p>
+<h2 id="script">Script</h2>
+<p>It felt natural to write this as a shell script given that it’s just a wrapper over a shell application, however the implementation was quite ugly. In most other languages calculating things like ceilings and square roots of numbers is much more elegant. Additionally, the blank font trick is a bit of a hack, but unfortunately there doesn’t seem to be another way of disabling the filename text for thumbnails in feh.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1"></a><span class="co">#!/bin/sh</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="co"># requires bc utility as well as the feh image viewer</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="co"># key actions (makes use of other scripts)</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="co"># 1 key -&gt; copy image to clipboard</span></span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="co"># 2 key -&gt; delete image</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="co"># 3 key -&gt; move image</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a></span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="fu">sqrt()</span> <span class="kw">{</span></span>
+<span id="cb1-11"><a href="#cb1-11"></a>    <span class="bu">echo</span> <span class="st">&quot;scale=2; sqrt(</span><span class="va">$1</span><span class="st">)&quot;</span> <span class="kw">|</span> <span class="fu">bc</span></span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="kw">}</span></span>
+<span id="cb1-13"><a href="#cb1-13"></a></span>
+<span id="cb1-14"><a href="#cb1-14"></a><span class="fu">ceil()</span> <span class="kw">{</span></span>
+<span id="cb1-15"><a href="#cb1-15"></a>    <span class="fu">awk</span> <span class="st">'function ceil(x) {</span></span>
+<span id="cb1-16"><a href="#cb1-16"></a><span class="st">        return (x == int(x)) ? x : int(x)+1</span></span>
+<span id="cb1-17"><a href="#cb1-17"></a><span class="st">    } { </span></span>
+<span id="cb1-18"><a href="#cb1-18"></a><span class="st">        printf &quot;%d\n&quot;, ceil($1) </span></span>
+<span id="cb1-19"><a href="#cb1-19"></a><span class="st">    }'</span></span>
+<span id="cb1-20"><a href="#cb1-20"></a><span class="kw">}</span></span>
+<span id="cb1-21"><a href="#cb1-21"></a></span>
+<span id="cb1-22"><a href="#cb1-22"></a><span class="co"># number of image files -&gt; number of rows</span></span>
+<span id="cb1-23"><a href="#cb1-23"></a><span class="fu">get_grid_rows()</span> <span class="kw">{</span></span>
+<span id="cb1-24"><a href="#cb1-24"></a>    <span class="ex">sqrt</span> <span class="va">$1</span> <span class="kw">|</span> <span class="ex">ceil</span></span>
+<span id="cb1-25"><a href="#cb1-25"></a><span class="kw">}</span></span>
+<span id="cb1-26"><a href="#cb1-26"></a></span>
+<span id="cb1-27"><a href="#cb1-27"></a><span class="co"># blank/no font: use adobe-blank font or similar</span></span>
+<span id="cb1-28"><a href="#cb1-28"></a><span class="co"># fallback to any truetype font with size of 0 (will still be slightly visible)</span></span>
+<span id="cb1-29"><a href="#cb1-29"></a><span class="va">BLANK_FONT=</span><span class="st">&quot;/usr/share/fonts/adobe-blank/AdobeBlank.ttf&quot;</span></span>
+<span id="cb1-30"><a href="#cb1-30"></a><span class="kw">if [[</span> <span class="st">&quot;</span><span class="va">$(</span><span class="fu">ls</span> -A <span class="va">$BLANK_FONT)</span><span class="st">&quot;</span><span class="kw"> ]]</span>; <span class="kw">then</span></span>
+<span id="cb1-31"><a href="#cb1-31"></a>    <span class="va">FONT=</span><span class="st">&quot;</span><span class="va">$BLANK_FONT</span><span class="st">/0&quot;</span></span>
+<span id="cb1-32"><a href="#cb1-32"></a><span class="kw">else</span></span>
+<span id="cb1-33"><a href="#cb1-33"></a>    <span class="va">FONT=</span><span class="st">&quot;</span><span class="va">$(</span><span class="fu">find</span> /usr/share/fonts -iname <span class="st">'*.ttf'</span> <span class="kw">|</span> <span class="fu">head</span> -n 1<span class="va">)</span><span class="st">/0&quot;</span></span>
+<span id="cb1-34"><a href="#cb1-34"></a><span class="kw">fi</span></span>
+<span id="cb1-35"><a href="#cb1-35"></a></span>
+<span id="cb1-36"><a href="#cb1-36"></a><span class="co"># define image grid dimensions</span></span>
+<span id="cb1-37"><a href="#cb1-37"></a><span class="va">NUM_FILES=</span><span class="st">&quot;</span><span class="va">$(</span><span class="fu">find</span> <span class="st">&quot;</span><span class="va">$1</span><span class="st">&quot;</span> -type f -iregex <span class="st">'.*\.\(jpg\|gif\|png\|jpeg\)$'</span> <span class="kw">|</span> <span class="fu">wc</span> -l<span class="va">)</span><span class="st">&quot;</span></span>
+<span id="cb1-38"><a href="#cb1-38"></a><span class="va">NUM_ROWS=$(</span><span class="ex">get_grid_rows</span> <span class="va">$NUM_FILES)</span></span>
+<span id="cb1-39"><a href="#cb1-39"></a><span class="va">WIDTH=</span>1000</span>
+<span id="cb1-40"><a href="#cb1-40"></a><span class="va">HEIGHT=</span>1000</span>
+<span id="cb1-41"><a href="#cb1-41"></a><span class="va">OFFSET=</span>100</span>
+<span id="cb1-42"><a href="#cb1-42"></a><span class="va">THUMB_WIDTH=$((</span>(<span class="va">$WIDTH</span> - <span class="va">$OFFSET</span>) / <span class="va">$NUM_ROWS))</span></span>
+<span id="cb1-43"><a href="#cb1-43"></a><span class="va">THUMB_HEIGHT=$THUMB_WIDTH</span></span>
+<span id="cb1-44"><a href="#cb1-44"></a></span>
+<span id="cb1-45"><a href="#cb1-45"></a><span class="kw">if [[</span> <span class="ot">-z</span> <span class="st">&quot;</span><span class="va">$(</span><span class="fu">ls</span> -A <span class="va">$1)</span><span class="st">&quot;</span><span class="kw"> ]]</span>; <span class="kw">then</span></span>
+<span id="cb1-46"><a href="#cb1-46"></a>    <span class="bu">echo</span> <span class="st">&quot;No files found.&quot;</span></span>
+<span id="cb1-47"><a href="#cb1-47"></a>    <span class="bu">exit</span> 1</span>
+<span id="cb1-48"><a href="#cb1-48"></a><span class="kw">fi</span></span>
+<span id="cb1-49"><a href="#cb1-49"></a></span>
+<span id="cb1-50"><a href="#cb1-50"></a><span class="bu">printf</span> <span class="st">&quot;Files: %s\n&quot;</span> <span class="va">$NUM_FILES</span></span>
+<span id="cb1-51"><a href="#cb1-51"></a><span class="bu">printf</span> <span class="st">&quot;Grid size: %sx%s\n&quot;</span> <span class="va">$WIDTH</span> <span class="va">$HEIGHT</span></span>
+<span id="cb1-52"><a href="#cb1-52"></a><span class="bu">printf</span> <span class="st">&quot;Thumbnail size: %sx%s\n\n&quot;</span> <span class="va">$THUMB_WIDTH</span> <span class="va">$THUMB_HEIGHT</span></span>
+<span id="cb1-53"><a href="#cb1-53"></a></span>
+<span id="cb1-54"><a href="#cb1-54"></a><span class="ex">feh</span> --thumbnails \</span>
+<span id="cb1-55"><a href="#cb1-55"></a>    --recursive \</span>
+<span id="cb1-56"><a href="#cb1-56"></a>    --quiet \</span>
+<span id="cb1-57"><a href="#cb1-57"></a>    --thumb-width <span class="va">$THUMB_WIDTH</span> \</span>
+<span id="cb1-58"><a href="#cb1-58"></a>    --thumb-height <span class="va">$THUMB_HEIGHT</span>  \</span>
+<span id="cb1-59"><a href="#cb1-59"></a>    --limit-width <span class="va">$WIDTH</span> \</span>
+<span id="cb1-60"><a href="#cb1-60"></a>    --limit-height <span class="va">$HEIGHT</span> \</span>
+<span id="cb1-61"><a href="#cb1-61"></a>    --geometry <span class="va">$WIDTHx$HEIGHT</span> \</span>
+<span id="cb1-62"><a href="#cb1-62"></a>    --font <span class="va">$FONT</span> \</span>
+<span id="cb1-63"><a href="#cb1-63"></a>    --action1 <span class="st">&quot;imgclip '%f'&quot;</span> \</span>
+<span id="cb1-64"><a href="#cb1-64"></a>    --action2 <span class="st">&quot;rm '%f'&quot;</span> \</span>
+<span id="cb1-65"><a href="#cb1-65"></a>    --action3 <span class="st">'rofi-mv &quot;%f&quot;'</span> \</span>
+<span id="cb1-66"><a href="#cb1-66"></a>    <span class="st">&quot;</span><span class="va">$1</span><span class="st">&quot;</span></span>
+<span id="cb1-67"><a href="#cb1-67"></a></span>
+<span id="cb1-68"><a href="#cb1-68"></a><span class="bu">exit</span> 0</span></code></pre></div>
+  </section>
+</article>
+
+    </main>
+
+    <footer>
+      © 2020 <b>Liam Wyllie</b>
+    </footer>
+  </body>
+</html>

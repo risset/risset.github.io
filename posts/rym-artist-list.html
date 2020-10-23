@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>risset.net - RYM Artist List</title>
+    <link rel="stylesheet" href="../assets/css/main.css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+	<a href="../"><span id="home">risset.net<span style="color: #808080">「</span>リセット<span style="color: #808080">」</span></span></a>
+	<a href="https://github.com/risset">github</a>
+      </nav>
+    </header>
+
+    <main role="main">
+      <article>
+  <section class="post-title">
+    RYM Artist List
+  </section>
+
+  <section class="post-date">
+    03-08-2020
+  </section>
+
+  <section class="post-body">
+    <h1 id="rym">RYM</h1>
+<p>RYM is an abbreviation of <a href="https://rateyourmusic.com">https://rateyourmusic.com</a>, a popular website for music listeners on the internet. It’s a very useful site for discovering new music and finding people with similar tastes, and I would recommend anyone with an interest in music to try it out. You can find my own profile here:</p>
+<p><a href="https://rateyourmusic.com/~otokonoko">https://rateyourmusic.com/~otokonoko</a></p>
+<h1 id="artist-list">Artist List</h1>
+<p>Today I wanted to update my list of favourite artists, which I had already formatted with some markup syntax as available on RYM’s profile pages. I realised that it would make more sense long-term to just create a simple string formatting script where I could store the artist data and generate the formatting strings automatically. It was very quick to write and will make things a lot easier and faster in the long run if I decide to tweak my profile more. Here’s the script:</p>
+<h1 id="script">Script</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="im">import</span> pyperclip</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="im">import</span> sys</span>
+<span id="cb1-3"><a href="#cb1-3"></a></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="co">Generate a pretty artist list for profiles on https://rateyourmusic.com. </span></span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="co">Easy to update with different/new artists by finding the right ArtistID values </span></span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="co">on the artist's page and updating the &quot;artists&quot; dictionary.</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a></span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="kw">def</span> artist_str(artist_id: <span class="bu">int</span>, artist_name: <span class="bu">str</span>, sep_col: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb1-11"><a href="#cb1-11"></a>    <span class="co">&quot;&quot;&quot;Format/style a single artist string.&quot;&quot;&quot;</span></span>
+<span id="cb1-12"><a href="#cb1-12"></a>    rule <span class="op">=</span> <span class="st">'[Artist</span><span class="sc">{}</span><span class="st">, </span><span class="sc">{}</span><span class="st">][b][color </span><span class="sc">{}</span><span class="st">]    |    [/color][/b]'</span></span>
+<span id="cb1-13"><a href="#cb1-13"></a>    <span class="cf">return</span> rule.<span class="bu">format</span>(artist_id, artist_name, sep_col)</span>
+<span id="cb1-14"><a href="#cb1-14"></a></span>
+<span id="cb1-15"><a href="#cb1-15"></a></span>
+<span id="cb1-16"><a href="#cb1-16"></a><span class="kw">def</span> generate_artist_list(artists: <span class="bu">dict</span>, sep_col: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb1-17"><a href="#cb1-17"></a>    <span class="co">&quot;&quot;&quot;Create a combined artist string.&quot;&quot;&quot;</span></span>
+<span id="cb1-18"><a href="#cb1-18"></a>    artist_list <span class="op">=</span> [artist_str(v, k, sep_col) <span class="cf">for</span> k, v <span class="kw">in</span> artists.items()]</span>
+<span id="cb1-19"><a href="#cb1-19"></a>    n <span class="op">=</span> <span class="dv">39</span> <span class="co"># characters at end to discard (don't need final separator...)</span></span>
+<span id="cb1-20"><a href="#cb1-20"></a>    <span class="cf">return</span> <span class="st">''</span>.join(artist_list)[:<span class="op">-</span>n]</span>
+<span id="cb1-21"><a href="#cb1-21"></a></span>
+<span id="cb1-22"><a href="#cb1-22"></a></span>
+<span id="cb1-23"><a href="#cb1-23"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">'__main__'</span>:</span>
+<span id="cb1-24"><a href="#cb1-24"></a>    artists <span class="op">=</span> {</span>
+<span id="cb1-25"><a href="#cb1-25"></a>        <span class="st">'iannis xenakis'</span>: <span class="dv">3441</span>,</span>
+<span id="cb1-26"><a href="#cb1-26"></a>        <span class="st">'henry cow'</span>: <span class="dv">1827</span>,</span>
+<span id="cb1-27"><a href="#cb1-27"></a>        <span class="st">'灰野 敬二'</span>: <span class="dv">10467</span>,</span>
+<span id="cb1-28"><a href="#cb1-28"></a>        <span class="st">'j.s. bach'</span>: <span class="dv">3419</span>,</span>
+<span id="cb1-29"><a href="#cb1-29"></a>        <span class="st">'györgy ligeti'</span>: <span class="dv">3444</span>,</span>
+<span id="cb1-30"><a href="#cb1-30"></a>        <span class="st">'john coltrane'</span>: <span class="dv">1101</span>,</span>
+<span id="cb1-31"><a href="#cb1-31"></a>        <span class="st">'red house painters'</span>: <span class="dv">817</span></span>
+<span id="cb1-32"><a href="#cb1-32"></a>    }</span>
+<span id="cb1-33"><a href="#cb1-33"></a></span>
+<span id="cb1-34"><a href="#cb1-34"></a>    artist_list <span class="op">=</span> generate_artist_list(artists, sep_col<span class="op">=</span><span class="st">'#ae81ff'</span>)</span>
+<span id="cb1-35"><a href="#cb1-35"></a></span>
+<span id="cb1-36"><a href="#cb1-36"></a>    <span class="co"># copy to clipboard if args given</span></span>
+<span id="cb1-37"><a href="#cb1-37"></a>    <span class="cf">if</span> <span class="bu">len</span>(sys.argv) <span class="op">==</span> <span class="dv">2</span>:</span>
+<span id="cb1-38"><a href="#cb1-38"></a>        <span class="cf">if</span> (sys.argv[<span class="dv">1</span>] <span class="op">==</span> <span class="st">'-clip'</span> <span class="kw">or</span> sys.argv[<span class="dv">1</span>] <span class="op">==</span> <span class="st">'-c'</span>):</span>
+<span id="cb1-39"><a href="#cb1-39"></a>            pyperclip.copy(artist_list)</span>
+<span id="cb1-40"><a href="#cb1-40"></a>            sys.exit(<span class="st">'Copied to clipboard.'</span>)</span>
+<span id="cb1-41"><a href="#cb1-41"></a></span>
+<span id="cb1-42"><a href="#cb1-42"></a>    <span class="co"># otherwise print to standard output</span></span>
+<span id="cb1-43"><a href="#cb1-43"></a>    <span class="bu">print</span>(artist_list)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode go"><code class="sourceCode go"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">func</span> main() {</span>
+<span id="cb2-2"><a href="#cb2-2"></a>    fmt.Println(<span class="st">&quot;Hello, world!&quot;</span>)</span>
+<span id="cb2-3"><a href="#cb2-3"></a>}</span></code></pre></div>
+  </section>
+</article>
+
+    </main>
+
+    <footer>
+      © 2020 <b>Liam Wyllie</b>
+    </footer>
+  </body>
+</html>

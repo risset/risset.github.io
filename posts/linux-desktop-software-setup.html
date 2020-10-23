@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>risset.net - Linux Desktop Software Setup</title>
+    <link rel="stylesheet" href="../assets/css/main.css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+	<a href="../"><span id="home">risset.net<span style="color: #808080">「</span>リセット<span style="color: #808080">」</span></span></a>
+	<a href="https://github.com/risset">github</a>
+      </nav>
+    </header>
+
+    <main role="main">
+      <article>
+  <section class="post-title">
+    Linux Desktop Software Setup
+  </section>
+
+  <section class="post-date">
+    20-07-2020
+  </section>
+
+  <section class="post-body">
+    <h1 id="background">Background</h1>
+<p>I’ve been using Linux on the desktop on and off for about eight years. During that time, I’ve tried quite a lot of different applications. I recently decided to use some variant of Linux as my desktop OS for the long haul, since I no longer have much need for proprietary software, and I feel more comfortable using some distribution of Linux, especially for programming. I thought it would be useful to document the software that I’ve been using both for myself as a historical reference point, and for others that may be interested. I didn’t include certain smaller utilities or things specifically related to different programming languages, as I wanted to keep it to more general desktop software.</p>
+<figure>
+<img src="../assets/images/gentoo.png" title="Gentoo" alt="gentoo system info image" title="gentoo system info" alt /><figcaption>System info, using the “neofetch” program</figcaption>
+</figure>
+<h1 id="window-manager">Window Manager</h1>
+<p>One of the many software choices for a Linux desktop user is to use either a full-fledged desktop environment or a standalone window manager. I prefer the latter and for a while now I have been using <a href="https://xmonad.org">xmonad</a> as my window manager of choice. In the past I’ve also used <a href="https://awesomewm.org">awesome</a> quite a lot. It’s important to me that my window manager is focused around dynamic window management, and allows me to declare workspace schemes that automate the process of determining what program goes where and in what kind of window arrangement. I dislike the typical approach of something like i3, where you spend a lot of time manually moving and arranging windows. Although the way it handles window splitting is more flexible than the fixed layouts of XMonad, I never really find myself having to come up with unique window arrangements spontaneously, and I find that most use cases rely upon a limited set of window arrangements that can be defined ahead of time. All of my workflow gets defined in my xmonad config (with help from the <a href="https://hackage.haskell.org/packge/xmonad-contrib-0.13/docs/XMonad-Actions-DynamicProjects.html">dynamic projects</a> module), cutting out the necessity of many keybindings and letting me focus on what I need to be doing rather than arranging windows. I’d say my configuration is still pretty basic, partly because I prefer not to spend <em>too</em> much time customising my environment, and partly because I want to get better at Haskell before making many more changes. There are some other things about xmonad that I find to be nice.</p>
+<h2 id="configuration">Configuration</h2>
+<p>Once you figure out the conventions, customising xmonad is quite easy and sensible, even without much haskell experience. There is a vast contrib library organised by category, such as new window layouts. Most modifications are as simple as including a module in your configuration file and adding or modifying a few lines of code.</p>
+<h2 id="prompts">Prompts</h2>
+<p>Xmonad has good support for performing a variety of tasks with a pop-up text prompt interface. I am using the prompt for the following things:</p>
+<ul>
+<li>Navigating to a particular window on any workspace</li>
+<li>Switching to a dynamic workspace or creating it, if it doesn’t yet exist</li>
+</ul>
+<p>My rule of thumb is to have xmonad handle tasks related to the window manager itself, while using <a href="https://github.com/davatorium/rofi">rofi</a> for more general things like launching programs and opening files.</p>
+<h2 id="layouts">Layouts</h2>
+<p>Compared to awesome, it’s definitely easier to define your own unique layouts. You can apply transformer functions to existing ones, such as reversing the orientation of its windows, or using meta layouts such as <a href="https://hackage.haskell.org/package/xmonad-contrib-0.16/docs/XMonad-Layout-SubLayouts.html">SubLayouts</a> that let you create more complicated layouts from the ground up.</p>
+<figure>
+<img src="../assets/images/desktop.png" title="my xmonad desktop" alt="xmonad desktop screenshot" title="my xmonad desktop" alt /><figcaption>My xmonad desktop. In the “admin” workspace, I show the output of gentoo’s “eix” command to look up the query “xmonad”, while editing my make.conf via TRAMP in emacs. On my other screen, I have an empty workspace.</figcaption>
+</figure>
+<h1 id="terminal-emulator">Terminal Emulator</h1>
+<p>The two main choices I have considered here are rxvt-unicode (urxvt), which I’ve used for a while, and st. At the moment, I have no real need to switch from urxvt to st. There aren’t enough differences between the two terminal emulators for me to care much. The st source code may be smaller and cleaner, but that’s more of an advantage for the developers/maintainers rather than the users to me. I may try st again in the future, but for now I’m happy with urxvt. As for why either of them are any good, they are both quite minimal feature-wise (st takes it to more of an extreme, and certain things need to be patched in manually). This suits me as I don’t really need many of the features that certain other terminal emulators provide.</p>
+<h1 id="text-editor">Text Editor</h1>
+<p>A couple of years ago, I switched from vim to emacs as my text editor of choice after trying it out with evil mode (vi-emulation in emacs), and I haven’t looked back. I am currently writing this blog post in emacs (via org-mode), and I also use it for programming and note taking. There is a lot to say about emacs that has already been said, so I won’t go into too much detail about it here.</p>
+<p>One thing I will talk a bit about is how I use it in combination with XMonad, which I find quite useful. That is, to let the window manager handle management of the emacs frames, allowing me to use the same keyboard shortcuts and window layouts across all applications. I use the following shell command bound to a key in XMonad to launch new emacs frames.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1"></a>(<span class="st">&quot;M-&lt;Return&gt;&quot;</span>, spawn <span class="st">&quot;emacsclient -c -n -e '(switch-to-buffer nil)'&quot;</span>)</span></code></pre></div>
+<h1 id="other-software">Other Software</h1>
+<h2 id="media-players">Media Players</h2>
+<p>I have used a combination of mpd, mpc and ncmpcpp for a number of years, and I’m pretty happy with it. I also use cava for visualisation, although that’s not particularly necessary, just nice to have for looks. I’ve been thinking about a better way of navigating my music library and playing albums from it. My ideal method would be browsing by album art combined with a narrowing text filter, preferably with fuzzy matching. This is similar to the facets plugin for the Foobar2000 player. I need to do some research on possible mpd clients or mpc-based scripts that do something like this, or maybe make something myself if it doesn’t exist already.</p>
+<figure>
+<img src="../assets/images/ncmpcpp.png" title="my music player" alt="music player image" title="my music player" alt /><figcaption>My music player, ncmpcpp, with the cava visualiser</figcaption>
+</figure>
+<p>For videos, I use mpv. My configuration is pretty minimal, just specifying video and audio output drivers and for videos to open automatically in fullscreen. One of mpv’s strengths is the extensibility through lua scripts, and there a few that I use to facilitate my language learning process through Japanese-subtitled videos, which I find to be invaluable.</p>
+<h2 id="web-browser">Web Browser</h2>
+<p>I use Firefox as my main browser, with the following adjustments:</p>
+<ul>
+<li>Tree style tabs, a vertical tab view with nesting</li>
+<li>Tridactyl, vi-emulation/vi-like shortcuts for firefox</li>
+<li>UserChrome.css tweaks to remove all UI elements</li>
+</ul>
+<p>Overall I am quite happy with this setup. Tridactyl is not quite as good as how I remember the old pentadactyl extension to be, but it seems to work well enough. Using tridactyl and tree style tabs forgoes the need for a URL bar and tabs bar respectively, hence the userChrome.css changes.</p>
+  </section>
+</article>
+
+    </main>
+
+    <footer>
+      © 2020 <b>Liam Wyllie</b>
+    </footer>
+  </body>
+</html>
